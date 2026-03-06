@@ -1,66 +1,94 @@
-//You can modify this component.
-
 import { useRef, useState } from "react";
 import { useUser } from "../contexts/UserProvider";
 import { Navigate } from "react-router-dom";
 
 export default function Login() {
-
   const [controlState, setControlState] = useState({
     isLoggingIn: false,
     isLoginError: false,
-    isLoginOk: false
+    errorMessage: ""
   });
 
   const emailRef = useRef();
   const passRef = useRef();
-  const {user, login} = useUser();
+  const { user, login } = useUser();
 
-  async function onLogin () {
-
-    setControlState((prev)=>{
-      return {
-        ...prev,
-        isLoggingIn: true
-      }
+  async function onLogin() {
+    // Reset error state and start loading
+    setControlState({
+      isLoggingIn: true,
+      isLoginError: false,
+      errorMessage: ""
     });
 
     const email = emailRef.current.value;
     const pass = passRef.current.value;
 
+    // Call the login function from UserProvider
     const result = await login(email, pass);
 
-    setControlState((prev) => {
-      return {
+    if (result.success) {
+      setControlState({
         isLoggingIn: false,
-        isLoginError: !result,
-        isLoginOk: result
-      }
-    });
+        isLoginError: false,
+        errorMessage: ""
+      });
+    } else {
+      setControlState({
+        isLoggingIn: false,
+        isLoginError: true,
+        errorMessage: result.message || "Login incorrect"
+      });
+    }
   }
 
-  if (!user.isLoggedIn)
-    return (
-      <div>
-        <table>
-          <tbody>
-            <tr>
-              <th>Email</th>
-              <td><input type="text" name="email" id="email" ref={emailRef}/> </td>
-            </tr>
-            <tr>
-              <th>Password</th>
-              <td><input type="password" name="password" id="password" ref={passRef}/> </td>
-            </tr>
-          </tbody>
-        </table>
-        <button onClick={onLogin} disabled={controlState.isLoggingIn}>Login</button>
-        {controlState.isLoginError && <div>Login incorrect</div>}
-        {user.isLoggedIn && <div>Login Success</div>}
+  // If already logged in, redirect to profile or home
+  if (user.isLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Library Management System Login</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>Email</th>
+            <td>
+              <input 
+                type="text" 
+                name="email" 
+                id="email" 
+                ref={emailRef} 
+                placeholder="admin@test.com"
+              /> 
+            </td>
+          </tr>
+          <tr>
+            <th>Password</th>
+            <td>
+              <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                ref={passRef} 
+                placeholder="admin123"
+              /> 
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style={{ marginTop: "10px" }}>
+        <button onClick={onLogin} disabled={controlState.isLoggingIn}>
+          {controlState.isLoggingIn ? "Logging in..." : "Login"}
+        </button>
       </div>
-    );
-  else
-    return (
-      <Navigate to="/profile" replace />
-    );
+      
+      {controlState.isLoginError && (
+        <div style={{ color: "red", marginTop: "10px" }}>
+          {controlState.errorMessage}
+        </div>
+      )}
+    </div>
+  );
 }

@@ -1,28 +1,34 @@
-//You can modify this component.
-
 import { useEffect, useState } from "react";
 import { useUser } from "../contexts/UserProvider";
 import { Navigate } from "react-router-dom";
-import Login from "./Login";
 
 export default function Logout() {
-
   const [isLoading, setIsLoading] = useState(true);
   const { logout } = useUser();
 
-  async function onLogout() {
-    await logout();
-    setIsLoading(false);
-  }
-
-  useEffect(()=>{
-    onLogout();
-  },[]);
+  useEffect(() => {
+    async function performLogout() {
+      try {
+        // This calls the logout logic in UserProvider 
+        // which clears localStorage and the HTTP-only cookie 
+        await logout();
+      } catch (error) {
+        console.error("Logout failed:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    performLogout();
+  }, [logout]);
 
   if (isLoading) {
-    return (<><h3>Loging out...</h3></>);
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h3>Logging out...</h3>
+      </div>
+    );
   }
-  else {
-    return (<Navigate to={<Login/>} replace/>)
-  }
+
+  // Redirect to the login path string, not the component 
+  return <Navigate to="/login" replace />;
 }
