@@ -40,3 +40,46 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: linear-gradient(90deg, #0f1720, #111214);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.app-nav .brand {
+  font-weight: 700;
+  color: #fff;
+  margin-right: 16px;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-link {
+  color: #ddd;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: background 0.18s, color 0.18s;
+}
+.nav-link:hover {
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+}
+
+/* Small layout for pages */
+.page-container {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 18px;
+}

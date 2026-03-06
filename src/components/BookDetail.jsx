@@ -16,7 +16,7 @@ export default function BookDetail() {
     location: ""
   });
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   // 1. Fetch individual book details [cite: 115]
   useEffect(() => {
@@ -94,7 +94,7 @@ export default function BookDetail() {
   if (!book) return <p>Loading book details...</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="page-container">
       <h2>Book Details</h2>
       
       {isEditing ? (

@@ -48,47 +48,26 @@ export default function Login() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="page-container" style={{ maxWidth: 480 }}>
       <h2>Library Management System Login</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th>Email</th>
-            <td>
-              <input 
-                type="text" 
-                name="email" 
-                id="email" 
-                ref={emailRef} 
-                placeholder="admin@test.com"
-              /> 
-            </td>
-          </tr>
-          <tr>
-            <th>Password</th>
-            <td>
-              <input 
-                type="password" 
-                name="password" 
-                id="password" 
-                ref={passRef} 
-                placeholder="admin123"
-              /> 
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div style={{ marginTop: "10px" }}>
-        <button onClick={onLogin} disabled={controlState.isLoggingIn}>
-          {controlState.isLoggingIn ? "Logging in..." : "Login"}
-        </button>
-      </div>
-      
-      {controlState.isLoginError && (
-        <div style={{ color: "red", marginTop: "10px" }}>
-          {controlState.errorMessage}
+      <div style={{ border: '1px solid #333', padding: 16, borderRadius: 8, background: '#121212' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <label>Email</label>
+          <input type="text" ref={emailRef} defaultValue="admin@test.com" placeholder="admin@test.com" style={{ padding: 8 }} />
+          <label>Password</label>
+          <input type="password" ref={passRef} defaultValue="admin123" placeholder="admin123" style={{ padding: 8 }} />
+          <div style={{ textAlign: 'center', marginTop: 8 }}>
+            <button onClick={onLogin} disabled={controlState.isLoggingIn}>
+              {controlState.isLoggingIn ? "Logging in..." : "Login"}
+            </button>
+          </div>
+          {controlState.isLoginError && (
+            <div style={{ color: "#ff6b6b", marginTop: "10px", textAlign: 'center' }}>
+              {controlState.errorMessage}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

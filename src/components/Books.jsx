@@ -14,7 +14,7 @@ export default function Books() {
   const [form, setForm] = useState({ title: "", author: "", quantity: 0, location: "" });
   const [editingId, setEditingId] = useState(null);
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   // 1. Fetch Books (Requirement 4 & 77)
   const fetchBooks = async () => {
@@ -75,7 +75,7 @@ export default function Books() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="page-container">
       <h2>Book Management</h2>
 
       {/* SEARCH SECTION (Requirement 4) */}
@@ -85,12 +85,13 @@ export default function Books() {
           placeholder="Search by Title" 
           value={searchTitle} 
           onChange={(e) => setSearchTitle(e.target.value)} 
+          style={{ padding: 8, marginRight: 8 }}
         />
         <input 
           placeholder="Search by Author" 
           value={searchAuthor} 
           onChange={(e) => setSearchAuthor(e.target.value)} 
-          style={{ marginLeft: "10px" }}
+          style={{ padding: 8 }}
         />
       </div>
 
@@ -110,7 +111,7 @@ export default function Books() {
       )}
 
       {/* BOOK LIST (Requirement 64-69) */}
-      {loading ? <p>Loading...</p> : (
+      {loading ? <p>Loading books...</p> : (
         <table border="1" width="100%" style={{ borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -133,8 +134,8 @@ export default function Books() {
                 <td>
                   {user.role === "ADMIN" ? (
                     <>
-                      <button onClick={() => {setEditingId(book._id); setForm(book)}}>Edit</button>
-                      <button onClick={() => handleDelete(book._id)} style={{ color: "red" }}>Delete</button>
+                      <button onClick={() => {setEditingId(book._id); setForm(book)}} style={{ marginRight: 8 }}>Edit</button>
+                      <button onClick={() => handleDelete(book._id)} style={{ color: "white", background: "#c0392b" }}>Delete</button>
                     </>
                   ) : (
                     <span>View Only</span>

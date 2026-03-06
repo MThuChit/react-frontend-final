@@ -8,7 +8,7 @@ export default function BookBorrow() {
   const [selectedBook, setSelectedBook] = useState("");
   const [targetDate, setTargetDate] = useState("");
   
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   // 1. Fetch data for the UI
   const fetchData = async () => {
@@ -23,7 +23,7 @@ export default function BookBorrow() {
       const reqData = await reqRes.json();
       setRequests(reqData);
     } catch (error) {
-      console.error("Error fetching data", error);
+      console.error("Error fetching data", error, "API_URL:", API_URL);
     }
   };
 
@@ -34,36 +34,53 @@ export default function BookBorrow() {
   // 2. Submit a new request (Requirement 9) 
   const handleRequest = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${API_URL}/api/borrow`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ bookId: selectedBook, targetDate }),
-      credentials: "include"
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/borrow`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookId: selectedBook, targetDate }),
+        credentials: "include"
+      });
 
-    if (response.ok) {
-      alert("Request submitted!");
-      setSelectedBook("");
-      setTargetDate("");
-      fetchData();
+      if (response.ok) {
+        alert("Request submitted!");
+        setSelectedBook("");
+        setTargetDate("");
+        fetchData();
+      } else {
+        const err = await response.json().catch(() => ({}));
+        alert(err.message || 'Failed to submit request');
+      }
+    } catch (error) {
+      console.error('Request error:', error, 'API_URL:', API_URL);
+      alert('Server connection error');
     }
   };
 
   // 3. Admin: Update Status (Requirement 10) 
   const updateStatus = async (requestId, newStatus) => {
-    const response = await fetch(`${API_URL}/api/borrow`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ requestId, status: newStatus }),
-      credentials: "include"
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/borrow`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, status: newStatus }),
+        credentials: "include"
+      });
 
-    if (response.ok) fetchData();
-    else if (response.status === 403) alert("Unauthorized action");
+      if (response.ok) fetchData();
+      else if (response.status === 403) alert("Unauthorized action");
+      else {
+        const err = await response.json().catch(() => ({}));
+        alert(err.message || 'Failed to update status');
+      }
+    } catch (error) {
+      console.error('Update status error:', error, 'API_URL:', API_URL);
+      alert('Server connection error');
+    }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="page-container">
       <h2>Book Borrowing Service</h2>
 
       {/* USER ONLY: Request Form [cite: 92] */}
@@ -72,7 +89,7 @@ export default function BookBorrow() {
           <h3>Create Borrowing Request</h3>
           <form onSubmit={handleRequest}>
             <label>Select Book: </label>
-            <select value={selectedBook} onChange={(e) => setSelectedBook(e.target.value)} required>
+            <select value={selectedBook} onChange={(e) => setSelectedBook(e.target.value)} required style={{ padding: 8 }}>
               <option value="">-- Choose a book --</option>
               {books.map(b => <option key={b._id} value={b._id}>{b.title}</option>)}
             </select>

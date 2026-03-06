@@ -9,7 +9,8 @@ export function UserProvider({ children }) {
     role: "", // Added role to satisfy Requirement 2 & 11
   };
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  // Use VITE_API_URL when available, otherwise fall back to localhost for development
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
   const [user, setUser] = useState(initialUser);
 
   // Requirement: Load session on mount so page refresh doesn't log user out
@@ -49,7 +50,7 @@ export function UserProvider({ children }) {
         return { success: false, message: data.message || "Login failed" };
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login error:", error, "API_URL:", API_URL);
       return { success: false, message: "Server connection error" };
     }
   };
